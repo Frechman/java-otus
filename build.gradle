@@ -8,7 +8,7 @@ plugins {
 
 idea {
     project {
-        languageLevel = 11
+        languageLevel = JavaVersion.VERSION_11
     }
 
     module {
@@ -18,11 +18,14 @@ idea {
 }
 
 allprojects {
-    group "ru.gavrilov"
-
     repositories {
         mavenCentral()
     }
+}
+
+subprojects {
+    version = '1.0'
+    group "ru.gavrilov"
 
     apply plugin: "io.spring.dependency-management"
     dependencyManagement {
@@ -30,10 +33,6 @@ allprojects {
             dependency("com.google.guava:guava:28.2-jre")
         }
     }
-}
-
-subprojects {
-    version = '1.0'
 }
 
 //example
