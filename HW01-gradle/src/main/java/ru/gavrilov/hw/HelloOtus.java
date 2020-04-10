@@ -1,4 +1,4 @@
-package ru.gavrilov;
+package ru.gavrilov.hw;
 
 import com.google.common.collect.Lists;
 
