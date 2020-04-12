@@ -54,7 +54,7 @@ public class MyArrayList<E> implements List<E> {
         Objects.requireNonNull(arr);
 
         if (arr.length < size) {
-            return (T[]) toArray();
+            arr = (T[]) Arrays.copyOf(data, size, arr.getClass()); //подглядел в ArrayList
         }
 
         System.arraycopy(data, 0, arr, 0, size);
@@ -250,8 +250,8 @@ public class MyArrayList<E> implements List<E> {
     }
 
     private class MyIterator implements Iterator<E> {
-        private int cursor = 0;
-        private int idxReturnedElm = -1;
+        int cursor = 0;
+        int idxReturnedElm = -1;
 
         @Override
         public boolean hasNext() {
@@ -272,34 +272,17 @@ public class MyArrayList<E> implements List<E> {
             if (idxReturnedElm < 0) {
                 throw new IllegalStateException("remove");
             }
-            MyArrayList.this.remove(idxReturnedElm);
             cursor = idxReturnedElm;
+            MyArrayList.this.remove(cursor);
             idxReturnedElm = -1;
         }
     }
 
-    private class MyListIter implements ListIterator<E> {
-
-        private int cursor;
-        private int idxReturnedElm = -1;
+    private class MyListIter extends MyIterator implements ListIterator<E> {
 
         MyListIter(int index) {
+            super();
             this.cursor = index;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return cursor < size;
-        }
-
-        @Override
-        public E next() {
-            if (hasNext()) {
-                int i = cursor++;
-                idxReturnedElm = i;
-                return (E) MyArrayList.this.data[i];
-            }
-            throw new NoSuchElementException("next");
         }
 
         @Override
@@ -328,19 +311,9 @@ public class MyArrayList<E> implements List<E> {
         }
 
         @Override
-        public void remove() {
-            if (idxReturnedElm < 0) {
-                throw new IllegalStateException();
-            }
-            MyArrayList.this.remove(cursor);
-            cursor = idxReturnedElm;
-            idxReturnedElm = -1;
-        }
-
-        @Override
         public void set(E e) {
             if (idxReturnedElm < 0) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("set");
             }
             MyArrayList.this.set(idxReturnedElm, e);
         }
