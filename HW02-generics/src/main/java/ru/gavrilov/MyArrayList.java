@@ -39,35 +39,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new Iterator<>() {
-
-            private int cursor = 0;
-            private int idxReturnedElm = -1;
-
-            @Override
-            public boolean hasNext() {
-                return cursor < size;
-            }
-
-            @Override
-            public E next() {
-                if (hasNext()) {
-                    idxReturnedElm = cursor++;
-                    return (E) data[idxReturnedElm];
-                }
-                throw new NoSuchElementException();
-            }
-
-            @Override
-            public void remove() {
-                if (idxReturnedElm < 0) {
-                    throw new IllegalStateException("remove");
-                }
-                MyArrayList.this.remove(idxReturnedElm);
-                cursor = idxReturnedElm;
-                idxReturnedElm = -1;
-            }
-        };
+        return new MyIterator();
     }
 
     @Override
@@ -277,19 +249,33 @@ public class MyArrayList<E> implements List<E> {
         return new MyListIter(index);
     }
 
-    public static void main(String[] args) {
-        var a = new MyArrayList<String>();
-        System.out.println(a);
-        var iterator = a.listIterator();
-        iterator.add("a");
-        System.out.println(iterator.previousIndex());
-        iterator.add("b");
-        System.out.println(iterator.previousIndex());
-        iterator.add("c");
-        System.out.println(iterator.previousIndex());
-        iterator.add("d");
-        System.out.println(iterator.previousIndex());
+    private class MyIterator implements Iterator<E> {
+        private int cursor = 0;
+        private int idxReturnedElm = -1;
 
+        @Override
+        public boolean hasNext() {
+            return cursor < size;
+        }
+
+        @Override
+        public E next() {
+            if (hasNext()) {
+                idxReturnedElm = cursor++;
+                return (E) data[idxReturnedElm];
+            }
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public void remove() {
+            if (idxReturnedElm < 0) {
+                throw new IllegalStateException("remove");
+            }
+            MyArrayList.this.remove(idxReturnedElm);
+            cursor = idxReturnedElm;
+            idxReturnedElm = -1;
+        }
     }
 
     private class MyListIter implements ListIterator<E> {
