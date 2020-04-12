@@ -41,18 +41,18 @@ public class MyArrayList<E> implements List<E> {
     public Iterator<E> iterator() {
         return new Iterator<>() {
 
-            private int index = 0;
+            private int cursor = 0;
             private int idxReturnedElm = -1;
 
             @Override
             public boolean hasNext() {
-                return index < size;
+                return cursor < size;
             }
 
             @Override
             public E next() {
                 if (hasNext()) {
-                    idxReturnedElm = index++;
+                    idxReturnedElm = cursor++;
                     return (E) data[idxReturnedElm];
                 }
                 throw new NoSuchElementException();
@@ -64,7 +64,7 @@ public class MyArrayList<E> implements List<E> {
                     throw new IllegalStateException("remove");
                 }
                 MyArrayList.this.remove(idxReturnedElm);
-                index = idxReturnedElm;
+                cursor = idxReturnedElm;
                 idxReturnedElm = -1;
             }
         };
@@ -268,12 +268,103 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public ListIterator<E> listIterator() {
-        return null;
+        return new MyListIter(0);
     }
 
     @Override
     public ListIterator<E> listIterator(int index) {
-        return null;
+        rangeCheck(index);
+        return new MyListIter(index);
+    }
+
+    public static void main(String[] args) {
+        var a = new MyArrayList<String>();
+        System.out.println(a);
+        var iterator = a.listIterator();
+        iterator.add("a");
+        System.out.println(iterator.previousIndex());
+        iterator.add("b");
+        System.out.println(iterator.previousIndex());
+        iterator.add("c");
+        System.out.println(iterator.previousIndex());
+        iterator.add("d");
+        System.out.println(iterator.previousIndex());
+
+    }
+
+    private class MyListIter implements ListIterator<E> {
+
+        private int cursor;
+        private int idxReturnedElm = -1;
+
+        MyListIter(int index) {
+            this.cursor = index;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return cursor < size;
+        }
+
+        @Override
+        public E next() {
+            if (hasNext()) {
+                int i = cursor++;
+                idxReturnedElm = i;
+                return (E) MyArrayList.this.data[i];
+            }
+            throw new NoSuchElementException("next");
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return cursor > 0;
+        }
+
+        @Override
+        public E previous() {
+            if (hasPrevious()) {
+                cursor = cursor - 1;
+                idxReturnedElm = cursor - 1;
+                return (E) MyArrayList.this.data[cursor];
+            }
+            throw new NoSuchElementException("previous");
+        }
+
+        @Override
+        public int nextIndex() {
+            return cursor;
+        }
+
+        @Override
+        public int previousIndex() {
+            return cursor - 1;
+        }
+
+        @Override
+        public void remove() {
+            if (idxReturnedElm < 0) {
+                throw new IllegalStateException();
+            }
+            MyArrayList.this.remove(cursor);
+            cursor = idxReturnedElm;
+            idxReturnedElm = -1;
+        }
+
+        @Override
+        public void set(E e) {
+            if (idxReturnedElm < 0) {
+                throw new IllegalStateException();
+            }
+            MyArrayList.this.set(idxReturnedElm, e);
+        }
+
+        @Override
+        public void add(E e) {
+            MyArrayList.this.add(cursor, e);
+            cursor++;
+            idxReturnedElm = -1;
+        }
     }
 
     @Override
@@ -282,7 +373,7 @@ public class MyArrayList<E> implements List<E> {
     }
 
     private void rangeCheck(int i) {
-        if (i < 0 || i >= size) {
+        if (i < 0 || i > size) {
             throw new IndexOutOfBoundsException();
         }
     }

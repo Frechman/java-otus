@@ -45,11 +45,10 @@ class MyArrayListTest {
         assertArrayEquals(libList, myList.toArray());
     }
 
-    @Disabled
     @Test
     @DisplayName("should work method Collections::copy")
     void testCopy() {
-        int testSize = 10_0;
+        int testSize = 10_000;
 
         List<String> myList = new MyArrayList<>(testSize);
         List<String> srcList = new ArrayList<>(testSize);
@@ -62,23 +61,20 @@ class MyArrayListTest {
         Collections.copy(myList, srcList);
 
         assertEquals(testSize, myList.size());
-        myList.forEach(System.out::println);
     }
 
-    @Disabled
     @Test
-    @DisplayName("test method Collections::sort")
+    @DisplayName("should work method Collections::sort")
     void testSort() {
 
-        int testSize = 10_0;
+        int testSize = 10_000;
         List<Integer> myList = new MyArrayList<>();
         for (int i = testSize - 1; i >= 0; i--) {
-            myList.add((int) Math.random() * 100);
+            myList.add((int) (Math.random() * 1000));
         }
 
         Collections.sort(myList, Comparator.comparingInt(Integer::intValue));
 
         assertEquals(testSize, myList.size());
-        myList.forEach(System.out::println);
     }
 }
