@@ -97,7 +97,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean containsAll(Collection<?> collection) {
-        for (Object obj: collection) {
+        for (Object obj : collection) {
             if (!this.contains(obj)) {
                 return false;
             }
@@ -129,10 +129,10 @@ public class MyArrayList<E> implements List<E> {
         int colSize = collection.size();
         Object[] newArr = new Object[size * 2 + colSize];
         System.arraycopy(data, 0, newArr, 0, i); //old data copy from 0 to `i`
-        System.arraycopy(data, i, newArr, i + colSize, colSize); //old data copy from `i` to `size`
+        System.arraycopy(data, i, newArr, i + colSize, size - i); //old data copy from `i` to `size`
 
         int idx = i;
-        for(E obj : collection) {
+        for (E obj : collection) {
             newArr[idx++] = obj;
         }
 
@@ -145,7 +145,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public boolean removeAll(Collection<?> collection) {
         boolean result = false;
-        for (Object obj: collection) {
+        for (Object obj : collection) {
             if (this.remove(obj)) {
                 result = true;
             }
@@ -249,6 +249,17 @@ public class MyArrayList<E> implements List<E> {
         return new MyListIter(index);
     }
 
+    @Override
+    public List<E> subList(int fromIndex, int toIndex) {
+        throw new UnsupportedOperationException("sub list unsupported");
+    }
+
+    private void rangeCheck(int i) {
+        if (i < 0 || i > size) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
     private class MyIterator implements Iterator<E> {
         int cursor = 0;
         int idxReturnedElm = -1;
@@ -323,17 +334,6 @@ public class MyArrayList<E> implements List<E> {
             MyArrayList.this.add(cursor, e);
             cursor++;
             idxReturnedElm = -1;
-        }
-    }
-
-    @Override
-    public List<E> subList(int fromIndex, int toIndex) {
-        throw new UnsupportedOperationException("sub list unsupported");
-    }
-
-    private void rangeCheck(int i) {
-        if (i < 0 || i > size) {
-            throw new IndexOutOfBoundsException();
         }
     }
 }
