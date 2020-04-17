@@ -80,7 +80,8 @@ public class MyArrayList<E> implements List<E> {
             data = newData;
         }
 
-        data[size++] = e;
+        data[size] = e;
+        size++;
         return true;
     }
 
@@ -107,15 +108,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> collection) {
-        Objects.requireNonNull(collection);
-        if (collection.isEmpty()) {
-            return false;
-        }
-
-        for (E obj : collection) {
-            this.add(obj);
-        }
-        return true;
+        return this.addAll(size, collection);
     }
 
     @Override
