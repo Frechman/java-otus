@@ -2,6 +2,6 @@
 
 ## java-samples
 
-### [Своя реализация ArrayList](./HW02-generics)
+#### [Task: Написать свою реализация ArrayList](./HW02-generics)
 
-> Collection, Generic
+`collection, generic, junit5, jmh, gradle`
