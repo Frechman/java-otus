@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+//    id "me.champeau.gradle.jmh" version "0.5.0"
 }
 
 group 'ru.gavrilov'
@@ -8,13 +9,55 @@ version '1.0'
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
+sourceSets {
+    jmh {
+        java.srcDirs = ['src/jmh/java']
+        resources.srcDirs = ['src/jmh/resources']
+        compileClasspath += sourceSets.main.runtimeClasspath
+        runtimeClasspath += sourceSets.test.runtimeClasspath
+    }
+}
+
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+
+    jmhImplementation "org.openjdk.jmh:jmh-core"
+    jmhAnnotationProcessor "org.openjdk.jmh:jmh-generator-annprocess"
 }
+
+task jmh(type: JavaExec, dependsOn: jmhClasses) {
+    main = 'org.openjdk.jmh.Main'
+    classpath = sourceSets.jmh.compileClasspath + sourceSets.jmh.runtimeClasspath
+}
+
+// to make sure benchmarks always get compiled
+classes.finalizedBy(jmhClasses)
+
 test {
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
     }
 }
+
+/*
+https://github.com/melix/jmh-gradle-plugin/tree/master#using-jmh-gradle-plugin-with-shadow-plugin
+Для использования плагина me.champeau.gradle.jmh :
+- раскомментировать строку в блоке plugins,
+- удалить блоки: sourceSet, task jmh
+- удалить classes.finalizeBy
+- удалить из dependency jmh
+- использовать блок настроек ниже
+
+jmh {
+    version = Versions.jmh
+    fork = 1 // How many times to forks a single benchmark. Use 0 to disable forking altogether
+    warmupIterations = 10 // Number of warmup iterations to do.
+    iterations = 10 // Number of measurement iterations to do.
+    benchmarkMode = ['ss'] // Benchmark mode. Available modes are: [Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all]
+    timeUnit = 'ns' // Output time unit. Available time units are: [m, s, ms, us, ns].
+//   batchSize = 1
+// warmupBatchSize = 10
+}
+*/
