@@ -20,3 +20,5 @@ Useful links:
 [JMH gradle plugin](https://github.com/melix/jmh-gradle-plugin/tree/master#using-jmh-gradle-plugin-with-shadow-plugin)
 <br/>
 [gradle.build for JMH (StackOverflow)](https://stackoverflow.com/questions/20443997/how-to-use-jmh-with-gradle)
+<br/>
+[Settings gradle.build for JMH (dev.to)](https://dev.to/o_a_e/jmh-with-gradle--from-easy-to-simple-52ec)
