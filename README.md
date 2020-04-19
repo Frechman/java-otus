@@ -2,7 +2,7 @@
 
 ## java-samples
 
-#### [Task: Написать свою реализация ArrayList](./HW02-generics)
+#### [Task: Написать свою реализацию ArrayList](./HW02-generics)
 Имплементация интерфейса List. Сравнение производительности с ArrayList c помощью JMH.
 
 > <code>collection, generic, junit5, JMH, gradle</code>
