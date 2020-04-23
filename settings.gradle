@@ -3,3 +3,5 @@
 rootProject.name = 'java-otus'
 include 'HW01-gradle'
 include 'HW02-generics'
+
+include 'notes'
