@@ -6,3 +6,8 @@
 Имплементация интерфейса List. Сравнение производительности с ArrayList c помощью JMH.
 
 > <code>collection, generic, junit5, JMH, gradle</code>
+
+#### [Task: Написать свой тестовый фреймворк](./HW03-test-framework)
+Разработка своего тестового фреймворка с использованием механизма reflection с поддержкой собственных аннотаций @Test, @BeforeEach, @AfterEach, @BeforeAll, @AfterAll
+
+> <code>reflection, annotation</code>
