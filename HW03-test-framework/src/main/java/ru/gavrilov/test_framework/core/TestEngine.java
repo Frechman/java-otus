@@ -1,9 +1,7 @@
 package ru.gavrilov.test_framework.core;
 
-import ru.gavrilov.test_framework.annotation.AfterAll;
-import ru.gavrilov.test_framework.annotation.BeforeAll;
+import ru.gavrilov.test_framework.annotation.*;
 import ru.gavrilov.test_framework.service.OutputService;
-import ru.gavrilov.test_framework.annotation.Test;
 import ru.gavrilov.test_framework.reflection.ReflectionHelper;
 
 import java.lang.reflect.Method;
@@ -12,48 +10,69 @@ import java.util.stream.Collectors;
 
 public class TestEngine {
 
-    private Class<?> clazz;
-    private List<Method> testMethods;
-    private List<Method> beforeAllMethods;
-    private List<Method> afterAllMethods;
+    private int count = 0;
+
+    private final Class<?> clazz;
+    private final List<Method> testMethods;
+    private final List<Method> beforeAllMethods;
+    private final List<Method> afterAllMethods;
+    private final List<Method> beforeMethods;
+    private final List<Method> afterMethods;
+
     private OutputService outputService;
 
     private Map<String, List<Throwable>> results = new HashMap<>();
 
     public TestEngine(Class<?> clazz, OutputService outputService) {
         this.clazz = clazz;
-        this.testMethods = ReflectionHelper.getMethodsWithAnnotation(Test.class, clazz.getDeclaredMethods());
-        this.beforeAllMethods = ReflectionHelper.getMethodsWithAnnotation(BeforeAll.class, clazz.getDeclaredMethods());
-        this.afterAllMethods = ReflectionHelper.getMethodsWithAnnotation(AfterAll.class, clazz.getDeclaredMethods());
+        this.testMethods = ReflectionHelper.getMethodsByAnnotation(clazz, Test.class);
+        this.beforeAllMethods = ReflectionHelper.getStaticMethodsByAnnotation(clazz, BeforeAll.class);
+        this.afterAllMethods = ReflectionHelper.getStaticMethodsByAnnotation(clazz, AfterAll.class);
+        this.beforeMethods = ReflectionHelper.getMethodsByAnnotation(clazz, Before.class);
+        this.afterMethods = ReflectionHelper.getMethodsByAnnotation(clazz, After.class);
         this.outputService = outputService;
     }
 
     public void runTests() {
         showStartingMsg();
 
-        beforeAllMethods.forEach(m -> ReflectionHelper.callMethod(null, m)); //methods must be static
+        try {
+            beforeAllMethods.forEach(m -> ReflectionHelper.callMethod(null, m));
 
-        for (Method method : testMethods) {
-            outputService.out(String.format("Start method: %s...", method.getName()));
+            startTestSuite();
 
-            TestCaseExceptionHandler testCase = new TestCaseExceptionHandler(
-                    new TestCaseImpl(clazz, method.getName())
-            );
-            testCase.run();
-
-            if (!testCase.getErrors().isEmpty()) {
-                results.put(method.getName(), new ArrayList<>(testCase.getErrors()));
+        } catch (Throwable t) {
+            results.put("из @BeforeAll методов", Collections.singletonList(t));
+        } finally {
+            try {
+                afterAllMethods.forEach(m -> ReflectionHelper.callMethod(null, m));
+            } catch (Throwable t) {
+                results.put("из @AfterAll методов", Collections.singletonList(t));
             }
         }
-
-        afterAllMethods.forEach(m -> ReflectionHelper.callMethod(null, m)); //methods must be static
 
         showStatistics(outputService);
     }
 
+    private void startTestSuite() {
+        for (Method method : testMethods) {
+            count++;
+
+            outputService.out(String.format("Выполняется метод: %s...", method.getName()));
+
+            TestCaseImpl testCase = new TestCaseImpl(clazz, method, beforeMethods, afterMethods);
+            testCase.run();
+
+            if (!testCase.getErrors().isEmpty()) {
+                results.put(method.getName(), new ArrayList<>(testCase.getErrors()));
+                count--;
+            }
+        }
+    }
+
     private void showStartingMsg() {
         outputService.out("==========================================");
-        outputService.out(String.format("Testing class: %s...", clazz.getCanonicalName()));
+        outputService.out(String.format("Тестируем класс: %s...", clazz.getCanonicalName()));
         outputService.out("==========================================");
     }
 
@@ -61,9 +80,10 @@ public class TestEngine {
         outputService.out(
                 String.join(System.lineSeparator(),
                         "==========================================",
-                        String.format("Запущено тестов: %d", testMethods.size()),
-                        String.format("Пройдено успешно: %d", testMethods.size() - results.size()),
-                        String.format("Не пройдено: %d", results.size()),
+                        String.format("Всего тестов: %d", testMethods.size()),
+                        String.format("Запущено тестов: %d", count),
+                        String.format("Пройдено успешно: %d", count),
+                        String.format("Не пройдено: %d", testMethods.size() - count),
                         "==========================================",
                         getResultFailedTest()
                 )
@@ -73,9 +93,8 @@ public class TestEngine {
     private String getResultFailedTest() {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, List<Throwable>> entry : results.entrySet()) {
-            sb.append("Метод ").append(entry.getKey()).append(" не пройден!");
+            sb.append("Метод ").append(entry.getKey()).append(" упал с ошибками:");
             sb.append(System.lineSeparator());
-            sb.append("Ошибки: ").append(System.lineSeparator());
             sb.append(msgErrors(entry.getValue()));
             sb.append(System.lineSeparator()).append(System.lineSeparator());
         }

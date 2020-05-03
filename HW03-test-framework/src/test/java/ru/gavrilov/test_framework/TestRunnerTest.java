@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 public class TestRunnerTest {
 
     @Test
-    void shouldTrue() {
+    void shouldTrueAndShowStatisticsOnConsole() {
         TestRunner.runTests("ru.gavrilov.test_framework.ExampleClassForTesting");
     }
 }

@@ -2,13 +2,14 @@ package ru.gavrilov.test_framework.reflection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class ReflectionHelper {
-    private ReflectionHelper(){
+    private ReflectionHelper() {
     }
 
     public static Object callMethod(Object object, String name, Object... args) {
@@ -46,14 +47,18 @@ public final class ReflectionHelper {
         }
     }
 
-    public static List<Method> getMethodsWithAnnotation(Class<? extends Annotation> annotation, Method... methods) {
-        final List<Method> testMethods = new ArrayList<>();
-        for (Method method : methods) {
-            if (method.getAnnotation(annotation) != null) {
-                testMethods.add(method);
-            }
-        }
-        return testMethods;
+    public static List<Method> getMethodsByAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(annotation))
+                .collect(Collectors.toList());
+    }
+
+    public static List<Method> getStaticMethodsByAnnotation(Class<?> clazz,
+                                                            Class<? extends Annotation> annotationClazz) {
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(annotationClazz))
+                .filter(method -> (method.getModifiers() & Modifier.STATIC) != 0)
+                .collect(Collectors.toList());
     }
 
 }
