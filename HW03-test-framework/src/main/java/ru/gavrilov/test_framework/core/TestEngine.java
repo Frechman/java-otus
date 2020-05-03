@@ -1,6 +1,7 @@
 package ru.gavrilov.test_framework.core;
 
 import ru.gavrilov.test_framework.annotation.*;
+import ru.gavrilov.test_framework.annotation.Test;
 import ru.gavrilov.test_framework.service.OutputService;
 import ru.gavrilov.test_framework.reflection.ReflectionHelper;
 
@@ -60,7 +61,7 @@ public class TestEngine {
 
             outputService.out(String.format("Выполняется метод: %s...", method.getName()));
 
-            TestCaseImpl testCase = new TestCaseImpl(clazz, method, beforeMethods, afterMethods);
+            TestCase testCase = new TestCase(clazz, method, beforeMethods, afterMethods);
             testCase.run();
 
             if (!testCase.getErrors().isEmpty()) {
