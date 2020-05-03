@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class Helper {
-    private Helper(){
+public final class ReflectionHelper {
+    private ReflectionHelper(){
     }
 
     public static Object callMethod(Object object, String name, Object... args) {

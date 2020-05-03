@@ -4,7 +4,7 @@ import ru.gavrilov.test_framework.annotation.AfterAll;
 import ru.gavrilov.test_framework.annotation.BeforeAll;
 import ru.gavrilov.test_framework.service.OutputService;
 import ru.gavrilov.test_framework.annotation.Test;
-import ru.gavrilov.test_framework.reflection.Helper;
+import ru.gavrilov.test_framework.reflection.ReflectionHelper;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -22,22 +22,22 @@ public class TestEngine {
 
     public TestEngine(Class<?> clazz, OutputService outputService) {
         this.clazz = clazz;
-        this.testMethods = Helper.getMethodsWithAnnotation(Test.class, clazz.getDeclaredMethods());
-        this.beforeAllMethods = Helper.getMethodsWithAnnotation(BeforeAll.class, clazz.getDeclaredMethods());
-        this.afterAllMethods = Helper.getMethodsWithAnnotation(AfterAll.class, clazz.getDeclaredMethods());
+        this.testMethods = ReflectionHelper.getMethodsWithAnnotation(Test.class, clazz.getDeclaredMethods());
+        this.beforeAllMethods = ReflectionHelper.getMethodsWithAnnotation(BeforeAll.class, clazz.getDeclaredMethods());
+        this.afterAllMethods = ReflectionHelper.getMethodsWithAnnotation(AfterAll.class, clazz.getDeclaredMethods());
         this.outputService = outputService;
     }
 
     public void runTests() {
         showStartingMsg();
 
-        beforeAllMethods.forEach(m -> Helper.callMethod(null, m)); //methods must be static
+        beforeAllMethods.forEach(m -> ReflectionHelper.callMethod(null, m)); //methods must be static
 
         for (Method method : testMethods) {
             outputService.out(String.format("Start method: %s...", method.getName()));
 
-            TestExceptionHandler testCase = new TestExceptionHandler(
-                    new TestCase(clazz, method.getName())
+            TestCaseExceptionHandler testCase = new TestCaseExceptionHandler(
+                    new TestCaseImpl(clazz, method.getName())
             );
             testCase.run();
 
@@ -46,7 +46,7 @@ public class TestEngine {
             }
         }
 
-        afterAllMethods.forEach(m -> Helper.callMethod(null, m)); //methods must be static
+        afterAllMethods.forEach(m -> ReflectionHelper.callMethod(null, m)); //methods must be static
 
         showStatistics(outputService);
     }

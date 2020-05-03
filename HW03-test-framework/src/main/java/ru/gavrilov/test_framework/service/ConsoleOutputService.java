@@ -4,7 +4,7 @@ import java.io.PrintStream;
 
 public class ConsoleOutputService implements OutputService {
 
-    PrintStream out = System.out;
+    private final PrintStream out = System.out;
 
     @Override
     public void out(String message) {
