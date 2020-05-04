@@ -58,6 +58,7 @@ public @interface Annotation {
 
 ### Reflection
 [examples](./src/main/java/ru/gavrilov/reflection)
+<br />
 [dynamic proxy example](./src/main/java/ru/gavrilov/reflection/dynamic_proxy)
 
 - https://www.oracle.com/technical-resources/articles/java/javareflection.html
