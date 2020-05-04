@@ -1,11 +1,13 @@
-### Notes
+## Notes
+
+Java topics notes
 
 ----
 
-#### Реализация Offheap IntegerList, используя sun.misc.Unsafe.
+### Реализация Offheap IntegerList, используя sun.misc.Unsafe.
 Сравнение производительности UnsafeIntList (add/get) с ArrayList при помощи JMH.
 
-[UnsafeIntList](./src/main/java/ru/gavrilov/unsafe/UnsafeIntList.java)
+[My implementation UnsafeIntList](./src/main/java/ru/gavrilov/unsafe/UnsafeIntList.java)
 > `sun.misc.Unsafe`, `JMH`
 
 - https://www.baeldung.com/java-unsafe
@@ -17,7 +19,7 @@
 
 ----
 
-#### Annotation
+### Annotation
 [Annotation examples](./src/main/java/ru/gavrilov/annotation/example/Main.java)
 
 ```java
@@ -54,10 +56,14 @@ public @interface Annotation {
 
 ----
 
-#### Reflection
+### Reflection
+[examples](./src/main/java/ru/gavrilov/reflection)
+[dynamic proxy example](./src/main/java/ru/gavrilov/reflection/dynamic_proxy)
 
+- https://www.oracle.com/technical-resources/articles/java/javareflection.html
+- http://tutorials.jenkov.com/java-reflection/index.html
 
 ----
 
-#### GC
+### GC
 -XX:+PrintCommandLineFlags -version
