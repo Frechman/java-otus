@@ -24,7 +24,7 @@ public @interface Unfinished {
 
     Priority priority() default Priority.MEDIUM;
 
-    String createdBy() default "Tully Trautwein";
+    String createdBy() default "Tully Trautwein"; // default значение вычисляется "динамически"
 
     String lastChanged() default "2000-01-01";
 }
