@@ -11,3 +11,8 @@
 Разработка своего тестового фреймворка с использованием механизма reflection с поддержкой собственных аннотаций @Test, @BeforeEach, @AfterEach, @BeforeAll, @AfterAll
 
 > <code>reflection, annotation</code>
+
+#### [Task: Автоматическое логирование.](./HW03-test-framework)
+Реализация механизма, который позволит логировать имя и параметры метода, если этот метод аннотирован собственной аннотацией @Log
+
+> <code>dynamic proxy, InvocationHandler</code>
