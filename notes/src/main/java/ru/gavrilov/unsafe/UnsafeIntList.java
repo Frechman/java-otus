@@ -4,6 +4,10 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 
+/**
+ * @author gavrilov-sv
+ * created on 23.04.2020
+ */
 public class UnsafeIntList implements AutoCloseable {
 
     private static final Unsafe unsafe = getUnsafe();
