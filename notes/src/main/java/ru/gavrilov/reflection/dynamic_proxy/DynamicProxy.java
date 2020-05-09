@@ -3,6 +3,10 @@ package ru.gavrilov.reflection.dynamic_proxy;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
+/**
+ * @author gavrilov-sv
+ * created on 04.05.2020
+ */
 public class DynamicProxy {
     public static void main(String[] args) {
         InvocationHandler handler = new MyInvocationHandler();

@@ -10,9 +10,11 @@ import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
 /**
- * сперва удалить `package ru.gavrilov.annotation.processors;` из каждого класса в пакете
+ * сперва удалить объявление пакета `package ru.gavrilov.annotation.processors;` из каждого класса в пакете
  * javac AnnotationProcessor.java
  * javac -processor AnnotationProcessor DataClass.java
+ *
+ * -XprintRounds для просмотра циклов обработки аннотаций
  */
 
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
