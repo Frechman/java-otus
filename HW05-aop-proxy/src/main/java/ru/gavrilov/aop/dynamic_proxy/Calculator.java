@@ -6,6 +6,14 @@ public class Calculator implements Computable {
     @Override
     public void compute(int param) { }
 
+    @Log
+    @Override
+    public void compute(int param1, int param2) { }
+
+    @Log
+    @Override
+    public void compute(String param) { }
+
     @Override
     public void something(int param) { }
 }
