@@ -7,18 +7,20 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ComputableHandler implements InvocationHandler {
+public class LoggingHandler implements InvocationHandler {
 
-    private final Computable computable;
+    private final Class<?> implClass;
+    private final Object instance;
     private final Set<Method> methodsForLogging;
 
-    public ComputableHandler(Computable computable) {
-        this.computable = computable;
-        this.methodsForLogging = getMethodForLogging();
+    public <T> LoggingHandler(Object originObject, Class<? extends T> implClass) {
+        this.implClass = implClass;
+        this.instance = originObject;
+        this.methodsForLogging = getMethodForLogging(implClass);
     }
 
-    private Set<Method> getMethodForLogging() {
-        return Arrays.stream(computable.getClass().getMethods())
+    private Set<Method> getMethodForLogging(Class<?> aClass) {
+        return Arrays.stream(aClass.getMethods())
                 .filter(m -> m.isAnnotationPresent(Log.class))
                 .map(this::getMethodsFromInterface)
                 .flatMap(Collection::stream)
@@ -30,11 +32,11 @@ public class ComputableHandler implements InvocationHandler {
         if (methodsForLogging.contains(method)) {
             System.out.println(String.format("executed method: %s, params: %s", method.getName(), Arrays.toString(args)));
         }
-        return method.invoke(computable, args);
+        return method.invoke(instance, args);
     }
 
     private Set<Method> getMethodsFromInterface(Method methodFromClass) {
-        return Arrays.stream(computable.getClass().getInterfaces())
+        return Arrays.stream(implClass.getInterfaces())
                 .map(Class::getDeclaredMethods)
                 .flatMap(Arrays::stream)
                 .filter(m -> m.getName().equals(methodFromClass.getName()))

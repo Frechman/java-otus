@@ -6,13 +6,13 @@ public class Demo {
     }
 
     public void action() {
-        Computable calculator = Ioc.createCalculator();
+        Computable calculator = Ioc.createObject(Calculator.class);
         calculator.compute(Integer.MAX_VALUE);
         calculator.compute(6);
         calculator.compute(1);
 
-        Ioc.createCalculator().something(0); //no logging
+        Ioc.<Computable>createObject(Calculator.class).something(0); //no logging
 
-        Ioc.createCalculator().compute(Integer.MIN_VALUE);
+        Ioc.<Computable>createObject(Calculator.class).compute(Integer.MIN_VALUE);
     }
 }

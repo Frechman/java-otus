@@ -49,7 +49,7 @@ class DemoTest {
     @Test
     @DisplayName("должно печатать в консоль \"" + TEXT_TO_PRINT1 + "\"")
     void shouldPrintLogMessageInConsole() {
-        Computable calculator = Ioc.createCalculator();
+        Computable calculator = Ioc.createObject(Calculator.class);
         calculator.compute(Integer.MAX_VALUE);
 
         assertThat(baos.toString()).isEqualTo(TEXT_TO_PRINT1 + EOL);
@@ -58,7 +58,7 @@ class DemoTest {
     @Test
     @DisplayName("должно печатать в консоль \"" + TEXT_TO_PRINT5 + "\"")
     void shouldPrintLogMessageInConsole5() {
-        Computable calculator = Ioc.createCalculator();
+        Computable calculator = Ioc.createObject(Calculator.class);
         calculator.compute("string Integer.MAX_VALUE");
 
         assertThat(baos.toString()).isEqualTo(TEXT_TO_PRINT5 + EOL);
@@ -67,7 +67,7 @@ class DemoTest {
     @Test
     @DisplayName("должно печатать в консоль \"" + TEXT_TO_PRINT6 + "\"")
     void shouldPrintLogMessageInConsole6() {
-        Computable calculator = Ioc.createCalculator();
+        Computable calculator = Ioc.createObject(Calculator.class);
         calculator.compute(Integer.MIN_VALUE, Integer.MAX_VALUE);
 
         assertThat(baos.toString()).isEqualTo(TEXT_TO_PRINT6 + EOL);
@@ -77,7 +77,7 @@ class DemoTest {
     @Test
     @DisplayName("не должно печатать в консоль")
     void shouldNotPrintLogMessage() {
-        Ioc.createCalculator().something(Integer.MIN_VALUE);
+        Ioc.<Computable>createObject(Calculator.class).something(Integer.MIN_VALUE);
 
         assertThat(baos.toString()).isEmpty();
     }
