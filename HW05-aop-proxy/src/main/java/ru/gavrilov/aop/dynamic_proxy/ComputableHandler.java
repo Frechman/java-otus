@@ -2,7 +2,9 @@ package ru.gavrilov.aop.dynamic_proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ComputableHandler implements InvocationHandler {
@@ -31,17 +33,12 @@ public class ComputableHandler implements InvocationHandler {
         return method.invoke(computable, args);
     }
 
-    private Set<Method> getMethodsFromInterface(Method method) {
+    private Set<Method> getMethodsFromInterface(Method methodFromClass) {
         return Arrays.stream(computable.getClass().getInterfaces())
-                .map(i -> {
-                    try {
-                        return i.getDeclaredMethod(method.getName(), method.getParameterTypes());
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
+                .map(Class::getDeclaredMethods)
+                .flatMap(Arrays::stream)
+                .filter(m -> m.getName().equals(methodFromClass.getName()))
+                .filter(m -> Arrays.equals(m.getParameterTypes(), methodFromClass.getParameterTypes()))
                 .collect(Collectors.toSet());
     }
 }
