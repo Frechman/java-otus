@@ -8,4 +8,4 @@
     - (executed method: methodName, param: methodArgs)
 - Явного вызова логирования быть не должно.
 
-> `reflection, dynamic proxy, InvocationHandler, annotation, Junit5`
+> `dynamic proxy, InvocationHandler, reflection, annotation, Junit5`

@@ -12,7 +12,7 @@
 
 > <code>reflection, annotation</code>
 
-#### [Task: Автоматическое логирование.](./HW03-test-framework)
+#### [Task: Автоматическое логирование.](./HW05-aop-proxy)
 Реализация механизма, который позволит логировать имя и параметры метода, если этот метод аннотирован собственной аннотацией @Log
 
 > <code>dynamic proxy, InvocationHandler</code>
