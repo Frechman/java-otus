@@ -22,7 +22,7 @@ public class BalanceCommand implements Transactional {
                 .mapToLong(cassette -> cassette.getKey().value() * cassette.getValue())
                 .sum();
 
-        System.out.print("balance: " + sum + " ");
+        System.out.print("Balance: " + sum + " ");
         System.out.println(cassette.toString());
     }
 }

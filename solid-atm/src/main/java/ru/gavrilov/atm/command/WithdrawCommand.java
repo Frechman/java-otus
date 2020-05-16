@@ -48,7 +48,7 @@ public class WithdrawCommand implements Transactional {
             System.out.println("Not enough money!");
 //            throw new NotEnoughMoneyException("Not enough money!");
         } else {
-            System.out.println("Withdrawn cash: " + resultMoney);
+            System.out.println("Withdrawn amount: " + amount + " " + resultMoney);
         }
     }
 }

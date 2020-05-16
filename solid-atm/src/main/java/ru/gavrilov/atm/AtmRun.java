@@ -22,7 +22,7 @@ public class AtmRun {
         atm.deposit(List.of(100L, 100L, 10L, 10L, 5L, 1L, 1000L));
         atm.balance();
 
-        atm.withdraw(926);
+        atm.withdraw(1225);
         atm.balance();
     }
 }
