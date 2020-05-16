@@ -8,4 +8,5 @@ include 'HW03-test-framework'
 include 'HW05-aop-proxy'
 
 include 'notes'
+include 'solid-atm'
 
