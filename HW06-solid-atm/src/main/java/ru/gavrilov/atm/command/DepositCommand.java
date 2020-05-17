@@ -30,5 +30,6 @@ public class DepositCommand implements Transactional {
                 cassette.put(nominal, count + 1);
             });
         }
+        System.out.println("Deposit: " + amount);
     }
 }

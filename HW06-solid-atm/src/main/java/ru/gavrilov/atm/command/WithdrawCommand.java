@@ -1,7 +1,6 @@
 package ru.gavrilov.atm.command;
 
 import ru.gavrilov.atm.Nominal;
-import ru.gavrilov.atm.exception.NotEnoughMoneyException;
 
 import java.util.*;
 
@@ -21,10 +20,10 @@ public class WithdrawCommand implements Transactional {
 
     @Override
     public void execute() {
-        Map<Nominal, Long> backupCassettes = new EnumMap<>(cassettes);
+        var backupCassettes = new HashMap<>(cassettes); //need to do deep copy if map contains mutable objects
 
         long sum = amount;
-        List<Long> resultMoney = new ArrayList<>();
+        var resultMoney = new ArrayList<>();
 
         List<Map.Entry<Nominal, Long>> cassettes = new ArrayList<>(this.cassettes.entrySet());
         cassettes.sort(Comparator.comparingLong((Map.Entry<Nominal, Long> e) -> e.getKey().value()).reversed());
@@ -46,7 +45,6 @@ public class WithdrawCommand implements Transactional {
             this.cassettes.putAll(backupCassettes);
 
             System.out.println("Not enough money!");
-//            throw new NotEnoughMoneyException("Not enough money!");
         } else {
             System.out.println("Withdrawn amount: " + amount + " " + resultMoney);
         }

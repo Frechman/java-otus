@@ -1,7 +1,7 @@
 package ru.gavrilov.atm;
 
+import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,7 +19,7 @@ public class AtmRun {
         Atm atm = new AtmImpl(initCassette);
         atm.balance();
 
-        atm.deposit(List.of(100L, 100L, 10L, 10L, 5L, 1L, 1000L));
+        atm.deposit(Arrays.asList(100L, 100L, 10L, 10L, 5L, 1L, 1000L));
         atm.balance();
 
         atm.withdraw(1225);
