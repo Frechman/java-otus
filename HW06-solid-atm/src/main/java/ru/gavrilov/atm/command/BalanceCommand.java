@@ -1,8 +1,8 @@
 package ru.gavrilov.atm.command;
 
-import ru.gavrilov.atm.Nominal;
+import ru.gavrilov.atm.model.Bankcell;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author gavrilov-sv
@@ -10,18 +10,18 @@ import java.util.Map;
  */
 public class BalanceCommand implements Transactional {
 
-    private Map<Nominal, Long> cassette;
+    private List<Bankcell> cassette;
 
-    public BalanceCommand(Map<Nominal, Long> cassette) {
+    public BalanceCommand(List<Bankcell> cassette) {
         this.cassette = cassette;
     }
 
     @Override
     public void execute() {
-        long sum = cassette.entrySet().stream()
-                .mapToLong(cassette -> cassette.getKey().value() * cassette.getValue())
+        long sum = cassette.stream()
+                .mapToLong(cassette -> cassette.nominal().value() * cassette.count())
                 .sum();
 
-        System.out.println("Balance: " + sum + " " + cassette.toString());
+        System.out.println("Balance: " + sum + " " + cassette);
     }
 }

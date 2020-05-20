@@ -1,12 +1,12 @@
-package ru.gavrilov.atm;
+package ru.gavrilov.atm.model;
 
 import ru.gavrilov.atm.command.BalanceCommand;
 import ru.gavrilov.atm.command.DepositCommand;
 import ru.gavrilov.atm.command.Transactional;
 import ru.gavrilov.atm.command.WithdrawCommand;
+import ru.gavrilov.atm.exception.NotEnoughMoneyException;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author gavrilov-sv
@@ -14,20 +14,24 @@ import java.util.Map;
  */
 public class AtmImpl implements Atm {
 
-    private Map<Nominal, Long> cassettes;
+    private List<Bankcell> cassettes;
 
-    public AtmImpl(Map<Nominal, Long> cassettes) {
+    public AtmImpl(List<Bankcell> cassettes) {
         this.cassettes = cassettes;
     }
 
     @Override
     public void withdraw(long amount) {
         Transactional withdrawCommand = new WithdrawCommand(amount, cassettes);
-        withdrawCommand.execute();
+        try {
+            withdrawCommand.execute();
+        } catch (NotEnoughMoneyException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
-    public void deposit(List<Long> amount) {
+    public void deposit(List<Banknote> amount) {
         Transactional depositCommand = new DepositCommand(amount, cassettes);
         depositCommand.execute();
     }

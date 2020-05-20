@@ -1,4 +1,4 @@
-package ru.gavrilov.atm;
+package ru.gavrilov.atm.model;
 
 import java.util.Optional;
 

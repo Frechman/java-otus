@@ -1,4 +1,6 @@
-package ru.gavrilov.atm;
+package ru.gavrilov.atm.model;
+
+import ru.gavrilov.atm.model.Banknote;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ public interface Atm {
 
     void withdraw(long amount);
 
-    void deposit(List<Long> amounts);
+    void deposit(List<Banknote> amounts);
 
     void balance();
 }
