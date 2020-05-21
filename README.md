@@ -17,5 +17,5 @@
 
 > <code>dynamic proxy, InvocationHandler</code>
 
-#### [Task: Эмулятор банкомата.](./HW06-solid-atm)
+#### [Task: Эмулятор банкомата.](./HW06-atm)
 Разработать эмулятор АТМ (банкомата)
