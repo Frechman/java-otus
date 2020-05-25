@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class AtmImpl implements Atm {
 
-    private List<Bankcell> cassettes;
+    private List<AtmCell> cassettes;
 
-    public AtmImpl(List<Bankcell> cassettes) {
+    public AtmImpl(List<AtmCell> cassettes) {
         this.cassettes = cassettes;
     }
 

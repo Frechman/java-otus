@@ -1,6 +1,6 @@
 package ru.gavrilov.atm.command;
 
-import ru.gavrilov.atm.model.Bankcell;
+import ru.gavrilov.atm.model.AtmCell;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class BalanceCommand implements Transactional {
 
-    private List<Bankcell> cassette;
+    private List<AtmCell> cassette;
 
-    public BalanceCommand(List<Bankcell> cassette) {
+    public BalanceCommand(List<AtmCell> cassette) {
         this.cassette = cassette;
     }
 

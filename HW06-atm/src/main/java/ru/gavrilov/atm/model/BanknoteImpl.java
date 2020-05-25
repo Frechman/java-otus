@@ -4,21 +4,21 @@ package ru.gavrilov.atm.model;
  * @author gavrilov-sv
  * created on 20.05.2020
  */
-public enum BanknoteEnum implements Banknote{
-
-    BANKNOTE_10(Nominal.TEN),
-    BANKNOTE_50(Nominal.FIFTY),
-    BANKNOTE_100(Nominal.HUNDRED),
-    BANKNOTE_1000(Nominal.THOUSAND);
+public class BanknoteImpl implements Banknote {
 
     private Nominal nominal;
 
-    BanknoteEnum(Nominal nominal) {
+    public BanknoteImpl(Nominal nominal) {
         this.nominal = nominal;
     }
 
     @Override
     public Nominal nominal() {
         return nominal;
+    }
+
+    @Override
+    public String toString() {
+        return "CASH_" + nominal.value();
     }
 }

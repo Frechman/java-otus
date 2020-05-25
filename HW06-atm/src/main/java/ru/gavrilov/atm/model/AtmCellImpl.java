@@ -3,27 +3,31 @@ package ru.gavrilov.atm.model;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.List;
 
 /**
  * @author gavrilov-sv
  * created on 20.05.2020
  */
-public class BankCellImpl implements Bankcell {
+public class AtmCellImpl implements AtmCell {
 
     private Nominal nominal;
-    private Deque<Banknote> money = new ArrayDeque<>();
+    private Deque<Banknote> money;
 
-    public BankCellImpl(Nominal nominal, Collection<Banknote> money) {
+    public AtmCellImpl(Nominal nominal, Collection<Banknote> money) {
         this.nominal = nominal;
-        this.money.addAll(money);
+        this.money = new ArrayDeque<>(money);
     }
 
     @Override
-    public void put(Banknote banknote) {
-        if (banknote.nominal() != nominal) {
-            throw new IllegalArgumentException("nominal exception");
+    public void put(List<Banknote> banknotes) {
+        for (Banknote banknote : banknotes) {
+            if (banknote.nominal() != nominal) {
+                System.out.println("Banknote with nominal " + banknote.nominal().value() + " not allowed.");
+                continue;
+            }
+            money.push(banknote);
         }
-        money.push(banknote);
     }
 
     @Override

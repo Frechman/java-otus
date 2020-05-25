@@ -1,11 +1,14 @@
 package ru.gavrilov.atm.command;
 
-import ru.gavrilov.atm.model.Bankcell;
+import ru.gavrilov.atm.exception.NotEnoughMoneyException;
+import ru.gavrilov.atm.model.AtmCell;
 import ru.gavrilov.atm.model.Banknote;
 import ru.gavrilov.atm.model.Nominal;
-import ru.gavrilov.atm.exception.NotEnoughMoneyException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author gavrilov-sv
@@ -14,47 +17,48 @@ import java.util.*;
 public class WithdrawCommand implements Transactional {
 
     private long amount;
-    private List<Bankcell> cassettes;
+    private List<AtmCell> atmCells;
 
-    public WithdrawCommand(long amount, List<Bankcell> cassettes) {
+    public WithdrawCommand(long amount, List<AtmCell> atmCells) {
         this.amount = amount;
-        this.cassettes = cassettes;
+        this.atmCells = atmCells;
     }
 
     @Override
     public void execute() {
-        cassettes.sort(Comparator.comparing(Bankcell::nominal, Comparator.comparingLong(Nominal::value)).reversed());
+        atmCells.sort(Comparator.comparing(AtmCell::nominal, Comparator.comparingLong(Nominal::value)).reversed());
 
         long sum = amount;
 
         List<Banknote> moneyForWithdraw = new ArrayList<>();
-        for (Bankcell cassette : cassettes) {
-            Nominal nominal = cassette.nominal();
+        for (AtmCell cell : atmCells) {
+            Nominal nominal = cell.nominal();
 
-            while (sum - nominal.value() >= 0 && cassette.count() > 0) {
-                Banknote take = cassette.take();
+            while (sum - nominal.value() >= 0 && cell.count() > 0) {
+                Banknote banknote = cell.take();
                 sum = sum - nominal.value();
 
-                moneyForWithdraw.add(take);
+                moneyForWithdraw.add(banknote);
             }
         }
 
         if (sum != 0) {
-            returnMoneyToCassette(moneyForWithdraw);
+            returnMoneyToAtmCells(moneyForWithdraw);
             throw new NotEnoughMoneyException("Not enough money!");
         } else {
             System.out.println("Withdrawn amount: " + amount + " " + moneyForWithdraw);
         }
     }
 
-    private void returnMoneyToCassette(List<Banknote> resultMoney) {
-        for (Banknote banknote : resultMoney) {
-            Nominal nominal = banknote.nominal();
-            for (Bankcell cassette : cassettes) {
-                if (cassette.nominal() == nominal){
-                    cassette.put(banknote);
-                }
-            }
-        }
+    private void returnMoneyToAtmCells(List<Banknote> resultMoney) {
+        resultMoney.stream()
+                .collect(Collectors.groupingBy(Banknote::nominal, Collectors.toList()))
+                .forEach((nominal, banknotes) -> {
+                    for (AtmCell cell : atmCells) {
+                        if (cell.nominal() == nominal) {
+                            cell.put(banknotes);
+                        }
+                    }
+                });
     }
 }

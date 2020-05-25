@@ -1,14 +1,14 @@
 package ru.gavrilov.atm.command;
 
-import ru.gavrilov.atm.model.Bankcell;
+import ru.gavrilov.atm.model.AtmCell;
 import ru.gavrilov.atm.model.Banknote;
 import ru.gavrilov.atm.model.Nominal;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author gavrilov-sv
@@ -16,38 +16,38 @@ import java.util.stream.Collectors;
  */
 public class DepositCommand implements Transactional {
 
-    private List<Banknote> money;
-    private Map<Nominal, Bankcell> cassettes;
+    private Map<Nominal, List<Banknote>> money;
+    private Map<Nominal, AtmCell> nominalAtmCellMap;
 
-    public DepositCommand(List<Banknote> money, List<Bankcell> cassettes) {
-        this.money = money;
-        this.cassettes = cassettes.stream().collect(Collectors.toMap(Bankcell::nominal, Function.identity()));
+    public DepositCommand(List<Banknote> money, List<AtmCell> atmCells) {
+        this.money = money.stream().collect(Collectors.groupingBy(Banknote::nominal, toList()));
+        this.nominalAtmCellMap = atmCells.stream().collect(Collectors.toMap(AtmCell::nominal, Function.identity()));
     }
 
     @Override
     public void execute() {
-        Set<Nominal> notAvailableForDeposit = getNominalNotAvailableForDeposit(money, cassettes);
+        Set<Nominal> notAvailableForDeposit = getNominalNotAvailableForDeposit(money, nominalAtmCellMap);
 
         if (!notAvailableForDeposit.isEmpty()) {
-            System.out.println("nominal which not available for deposit: " + notAvailableForDeposit.toString());
+            System.out.println("Nominal which not available for deposit: " + notAvailableForDeposit.toString());
             //maybe an exception
         }
 
-        for (Banknote banknote : money) {
-            Nominal nominal = banknote.nominal();
+        for (Map.Entry<Nominal, List<Banknote>> entry : money.entrySet()) {
+            Nominal nominal = entry.getKey();
+            List<Banknote> banknotes = money.get(nominal);
 
-            Bankcell bankcell = cassettes.get(nominal);
-            if (bankcell != null) {
-                bankcell.put(banknote);
+            AtmCell atmCell = nominalAtmCellMap.get(nominal);
+            if (atmCell != null) {
+                atmCell.put(banknotes);
             }
         }
-        System.out.println("Introduced cash: " + money);
+        System.out.println("Introduced cash: " + money.values());
     }
 
-    private Set<Nominal> getNominalNotAvailableForDeposit(final List<Banknote> banknotesForDeposit,
-                                                          final Map<Nominal, Bankcell> cassettes) {
-        return banknotesForDeposit.stream()
-                .map(Banknote::nominal)
+    private Set<Nominal> getNominalNotAvailableForDeposit(final Map<Nominal, List<Banknote>> banknotesForDeposit,
+                                                          final Map<Nominal, AtmCell> cassettes) {
+        return banknotesForDeposit.keySet().stream()
                 .filter(n -> !cassettes.containsKey(n))
                 .collect(Collectors.toSet());
     }

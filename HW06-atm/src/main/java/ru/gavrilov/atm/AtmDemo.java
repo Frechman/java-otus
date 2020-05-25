@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static ru.gavrilov.atm.model.BanknoteEnum.*;
+import static ru.gavrilov.atm.model.Nominal.*;
+
 
 /**
  * @author gavrilov-sv
@@ -15,21 +16,27 @@ import static ru.gavrilov.atm.model.BanknoteEnum.*;
 public class AtmDemo {
 
     public static void main(String[] args) {
-        Bankcell bankCell = new BankCellImpl(Nominal.TEN, Arrays.asList(BANKNOTE_10, BANKNOTE_10, BANKNOTE_10));
-        Bankcell bankCell2 = new BankCellImpl(Nominal.HUNDRED, Arrays.asList(BANKNOTE_100, BANKNOTE_100, BANKNOTE_100));
-        Bankcell bankCell3 = new BankCellImpl(Nominal.THOUSAND, Arrays.asList(BANKNOTE_1000, BANKNOTE_1000, BANKNOTE_1000));
+        AtmCell bankCell = new AtmCellImpl(TEN,
+                Arrays.asList(new BanknoteImpl(TEN), new BanknoteImpl(TEN), new BanknoteImpl(TEN)));
 
-        List<Bankcell> initCassette = new ArrayList<>(Arrays.asList(bankCell, bankCell2, bankCell3));
+        AtmCell bankCell2 = new AtmCellImpl(HUNDRED,
+                Arrays.asList(new BanknoteImpl(HUNDRED), new BanknoteImpl(HUNDRED), new BanknoteImpl(TEN)));
+
+        AtmCell bankCell3 = new AtmCellImpl(THOUSAND,
+                Arrays.asList(new BanknoteImpl(THOUSAND), new BanknoteImpl(THOUSAND), new BanknoteImpl(THOUSAND)));
+
+        List<AtmCell> initCassette = new ArrayList<>(Arrays.asList(bankCell, bankCell2, bankCell3));
 
         Atm atm = new AtmImpl(initCassette);
         atm.balance();
         System.out.println();
 
-        atm.deposit(Arrays.asList(BANKNOTE_100, BANKNOTE_100, BANKNOTE_10, BANKNOTE_10, BANKNOTE_1000));
+        atm.deposit(Arrays.asList(new BanknoteImpl(HUNDRED), new BanknoteImpl(HUNDRED),
+                new BanknoteImpl(TEN), new BanknoteImpl(TEN), new BanknoteImpl(THOUSAND)));
         atm.balance();
         System.out.println();
 
-        atm.deposit(Arrays.asList(BANKNOTE_100, BANKNOTE_50));
+        atm.deposit(Arrays.asList(new BanknoteImpl(HUNDRED), new BanknoteImpl(FIFTY)));
         atm.balance();
         System.out.println();
 
