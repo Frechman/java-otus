@@ -1,8 +1,5 @@
 package ru.gavrilov.atm.model;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -12,11 +9,11 @@ import java.util.List;
 public class AtmCellImpl implements AtmCell {
 
     private Nominal nominal;
-    private Deque<Banknote> money;
+    private long count;
 
-    public AtmCellImpl(Nominal nominal, Collection<Banknote> money) {
+    public AtmCellImpl(Nominal nominal, long count) {
         this.nominal = nominal;
-        this.money = new ArrayDeque<>(money);
+        this.count = count;
     }
 
     @Override
@@ -26,18 +23,19 @@ public class AtmCellImpl implements AtmCell {
                 System.out.println("Banknote with nominal " + banknote.nominal().value() + " not allowed.");
                 continue;
             }
-            money.push(banknote);
+            count++;
         }
     }
 
     @Override
     public Banknote take() {
-        return money.pop();
+        count--;
+        return new BanknoteImpl(nominal);
     }
 
     @Override
     public long count() {
-        return money.size();
+        return count;
     }
 
     @Override

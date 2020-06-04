@@ -15,14 +15,9 @@ import static ru.gavrilov.atm.model.Nominal.*;
 public class AtmDemo {
 
     public static void main(String[] args) {
-        AtmCell bankCell = new AtmCellImpl(TEN,
-                Arrays.asList(new BanknoteImpl(TEN), new BanknoteImpl(TEN), new BanknoteImpl(TEN)));
-
-        AtmCell bankCell2 = new AtmCellImpl(HUNDRED,
-                Arrays.asList(new BanknoteImpl(HUNDRED), new BanknoteImpl(HUNDRED), new BanknoteImpl(TEN)));
-
-        AtmCell bankCell3 = new AtmCellImpl(THOUSAND,
-                Arrays.asList(new BanknoteImpl(THOUSAND), new BanknoteImpl(THOUSAND), new BanknoteImpl(THOUSAND)));
+        AtmCell bankCell = new AtmCellImpl(TEN, 3);
+        AtmCell bankCell2 = new AtmCellImpl(HUNDRED,3);
+        AtmCell bankCell3 = new AtmCellImpl(THOUSAND, 3);
 
         List<AtmCell> initCassette = new ArrayList<>(Arrays.asList(bankCell, bankCell2, bankCell3));
 
