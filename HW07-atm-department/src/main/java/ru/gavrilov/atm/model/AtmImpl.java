@@ -13,6 +13,7 @@ import ru.gavrilov.atm.memento.AtmState;
 import ru.gavrilov.atm.observer.cmd.DepartmentCmd;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author gavrilov-sv
@@ -68,5 +69,18 @@ public class AtmImpl implements Atm {
     @Override
     public void update(DepartmentCmd departmentCmd) {
         departmentCmd.execute(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AtmImpl atm = (AtmImpl) o;
+        return Objects.equals(code, atm.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code);
     }
 }

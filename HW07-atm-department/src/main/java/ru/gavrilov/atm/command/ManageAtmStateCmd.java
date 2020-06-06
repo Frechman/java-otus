@@ -18,6 +18,7 @@ public class ManageAtmStateCmd implements Transactional {
      * History of the ATM's state
      */
     private final Deque<AtmMemento> snapshots = new ArrayDeque<>();
+
     private final Atm atm;
 
     /**
@@ -40,5 +41,9 @@ public class ManageAtmStateCmd implements Transactional {
      */
     public void undo() {
         snapshots.pop().restore();
+    }
+
+    public Atm getAtm() {
+        return atm;
     }
 }

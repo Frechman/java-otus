@@ -11,14 +11,16 @@ import java.util.List;
  */
 public class DepartmentManager implements Subject {
 
-    private List<Observer> observers = new ArrayList<>();
+    private final List<Observer> observers = new ArrayList<>();
 
     public DepartmentManager() {
     }
 
     @Override
     public void register(Observer listener) {
-        observers.add(listener);
+        if (listener != null) {
+            observers.add(listener);
+        }
     }
 
     @Override

@@ -6,8 +6,9 @@ import ru.gavrilov.atm.observer.cmd.DepartmentBalanceCmd;
 import ru.gavrilov.atm.command.ManageAtmStateCmd;
 import ru.gavrilov.atm.observer.DepartmentManager;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author gavrilov-sv
@@ -15,19 +16,16 @@ import java.util.List;
  */
 public class AtmDepartmentImpl implements AtmDepartment {
 
-    private List<Atm> atms = new ArrayList<>();
-    private List<ManageAtmStateCmd> manageAtmStateCmds = new ArrayList<>();
+    private final Map<String, ManageAtmStateCmd> managersAtmState = new HashMap<>();
     private final DepartmentManager balanceManager = new DepartmentManager();
 
     public AtmDepartmentImpl() {
-        this.atms = new ArrayList<>();
-        this.manageAtmStateCmds = new ArrayList<>();
     }
 
     public AtmDepartmentImpl(List<Atm> atms) {
         for (Atm atm : atms) {
-            this.atms.add(atm);
-            this.saveAtmState(atm);
+            saveAtmState(atm);
+
             balanceManager.register(atm);
         }
     }
@@ -35,12 +33,12 @@ public class AtmDepartmentImpl implements AtmDepartment {
     private void saveAtmState(Atm atm) {
         var cmd = new ManageAtmStateCmd(atm);
         cmd.execute();
-        manageAtmStateCmds.add(cmd);
+        managersAtmState.put(atm.getCode(), cmd);
     }
 
     @Override
     public void restoreAllAtm() {
-        manageAtmStateCmds.forEach(ManageAtmStateCmd::undo);
+        managersAtmState.values().forEach(ManageAtmStateCmd::undo);
         System.out.println("Restored states all ATMs");
     }
 
@@ -52,14 +50,13 @@ public class AtmDepartmentImpl implements AtmDepartment {
 
     @Override
     public void addAtm(Atm atm) {
-        atms.add(atm);
         saveAtmState(atm);
         balanceManager.register(atm);
     }
 
     @Override
     public void removeAtm(Atm atm) {
-        atms.remove(atm);
+        managersAtmState.remove(atm.getCode());
         balanceManager.unregister(atm);
     }
 }
