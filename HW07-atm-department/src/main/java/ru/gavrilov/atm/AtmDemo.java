@@ -1,6 +1,6 @@
 package ru.gavrilov.atm;
 
-import ru.gavrilov.atm.memento.AtmCaretaker;
+import ru.gavrilov.atm.memento.AtmMemento;
 import ru.gavrilov.atm.model.*;
 
 import java.util.ArrayList;
@@ -16,15 +16,15 @@ import static ru.gavrilov.atm.model.Nominal.*;
 public class AtmDemo {
 
     public static void main(String[] args) {
-        AtmCaretaker atmCaretaker = new AtmCaretaker();
         AtmCell bankCell = new AtmCellImpl(TEN, 3);
-        AtmCell bankCell2 = new AtmCellImpl(HUNDRED,3);
+        AtmCell bankCell2 = new AtmCellImpl(HUNDRED, 3);
         AtmCell bankCell3 = new AtmCellImpl(THOUSAND, 3);
 
         List<AtmCell> initCassette = new ArrayList<>(Arrays.asList(bankCell, bankCell2, bankCell3));
 
         Atm atm = new AtmImpl(initCassette);
-        atmCaretaker.addMemento(atm.saveState());
+
+        AtmMemento initialState = atm.saveState();
         atm.balance();
         System.out.println("Saving initial state...\n");
 
@@ -41,7 +41,7 @@ public class AtmDemo {
         atm.balance();
 
         System.out.println("\nRestore initial state...");
-        atm.restoreState(atmCaretaker.get());
+        atm.restoreState(initialState);
         atm.balance();
     }
 }

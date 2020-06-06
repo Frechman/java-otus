@@ -1,11 +1,11 @@
 package ru.gavrilov.atm.model;
 
-import ru.gavrilov.atm.memento.AtmMemento;
 import ru.gavrilov.atm.command.BalanceCommand;
 import ru.gavrilov.atm.command.DepositCommand;
 import ru.gavrilov.atm.command.Transactional;
 import ru.gavrilov.atm.command.WithdrawCommand;
 import ru.gavrilov.atm.exception.NotEnoughMoneyException;
+import ru.gavrilov.atm.memento.AtmMemento;
 import ru.gavrilov.atm.memento.AtmState;
 
 import java.util.List;
@@ -51,6 +51,6 @@ public class AtmImpl implements Atm {
 
     @Override
     public AtmMemento saveState() {
-        return new AtmMemento(new AtmState(cassettes));
+        return new AtmMemento(this, new AtmState(cassettes));
     }
 }

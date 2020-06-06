@@ -2,8 +2,6 @@ package ru.gavrilov.atm.memento;
 
 import ru.gavrilov.atm.model.AtmCell;
 import ru.gavrilov.atm.model.AtmCellImpl;
-import ru.gavrilov.atm.model.Banknote;
-import ru.gavrilov.atm.model.BanknoteImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +13,6 @@ import java.util.List;
 public class AtmState {
 
     private List<AtmCell> cells;
-
-    public AtmState(AtmState atmState) {
-        copyState(atmState.getCells());
-    }
 
     public AtmState(List<AtmCell> cells) {
         copyState(cells);
