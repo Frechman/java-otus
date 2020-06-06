@@ -1,6 +1,6 @@
 package ru.gavrilov.atm.memento;
 
-import ru.gavrilov.atm.model.Atm;
+import ru.gavrilov.atm.api.Atm;
 
 /**
  * @author gavrilov-sv

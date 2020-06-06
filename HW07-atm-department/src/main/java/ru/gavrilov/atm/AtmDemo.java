@@ -1,5 +1,7 @@
 package ru.gavrilov.atm;
 
+import ru.gavrilov.atm.api.Atm;
+import ru.gavrilov.atm.api.AtmCell;
 import ru.gavrilov.atm.memento.AtmMemento;
 import ru.gavrilov.atm.model.*;
 
@@ -7,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static ru.gavrilov.atm.model.Nominal.*;
+import static ru.gavrilov.atm.api.Nominal.*;
 
 /**
  * @author gavrilov-sv
@@ -22,16 +24,18 @@ public class AtmDemo {
 
         List<AtmCell> initCassette = new ArrayList<>(Arrays.asList(bankCell, bankCell2, bankCell3));
 
-        Atm atm = new AtmImpl(initCassette);
+        Atm atm = new AtmImpl("#3377733", initCassette);
 
-        AtmMemento initialState = atm.saveState();
-        atm.balance();
-        System.out.println("Saving initial state...\n");
+        final AtmDepartmentImpl department = new AtmDepartmentImpl();
+        department.addAtm(atm);
 
         atm.deposit(Arrays.asList(new BanknoteImpl(HUNDRED), new BanknoteImpl(HUNDRED),
                 new BanknoteImpl(TEN), new BanknoteImpl(TEN), new BanknoteImpl(THOUSAND)));
         atm.balance();
         System.out.println();
+        AtmMemento initialState = atm.saveState();
+        atm.balance();
+        System.out.println("Saving state...\n");
 
         atm.deposit(Arrays.asList(new BanknoteImpl(HUNDRED), new BanknoteImpl(FIFTY)));
         atm.balance();
@@ -40,8 +44,14 @@ public class AtmDemo {
         atm.withdraw(1650);
         atm.balance();
 
-        System.out.println("\nRestore initial state...");
-        atm.restoreState(initialState);
+        System.out.println();
+
+        department.departmentBalance();
+        department.restoreAllAtm();
         atm.balance();
+
+        System.out.println("\nRestore state...");
+        atm.restoreState(initialState);
+        department.departmentBalance();
     }
 }

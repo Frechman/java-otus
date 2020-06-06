@@ -1,5 +1,9 @@
 package ru.gavrilov.atm.model;
 
+import ru.gavrilov.atm.api.AtmCell;
+import ru.gavrilov.atm.api.Banknote;
+import ru.gavrilov.atm.api.Nominal;
+
 import java.util.List;
 
 /**

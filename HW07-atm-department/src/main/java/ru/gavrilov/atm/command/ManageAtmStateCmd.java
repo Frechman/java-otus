@@ -1,7 +1,7 @@
 package ru.gavrilov.atm.command;
 
 import ru.gavrilov.atm.memento.AtmMemento;
-import ru.gavrilov.atm.model.Atm;
+import ru.gavrilov.atm.api.Atm;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

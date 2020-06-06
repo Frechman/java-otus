@@ -1,6 +1,6 @@
 package ru.gavrilov.atm.command;
 
-import ru.gavrilov.atm.model.AtmCell;
+import ru.gavrilov.atm.api.AtmCell;
 
 import java.util.List;
 
@@ -18,10 +18,14 @@ public class BalanceCommand implements Transactional {
 
     @Override
     public void execute() {
-        long sum = cassette.stream()
-                .mapToLong(cassette -> cassette.nominal().value() * cassette.count())
-                .sum();
+        long sum = getSum();
 
         System.out.println("Balance: " + sum + " " + cassette);
+    }
+
+    public long getSum() {
+        return cassette.stream()
+                .mapToLong(cassette -> cassette.nominal().value() * cassette.count())
+                .sum();
     }
 }

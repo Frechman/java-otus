@@ -1,7 +1,10 @@
-package ru.gavrilov.atm;
+package ru.gavrilov.atm.model;
 
+import ru.gavrilov.atm.api.Atm;
+import ru.gavrilov.atm.api.AtmDepartment;
+import ru.gavrilov.atm.observer.cmd.DepartmentBalanceCmd;
 import ru.gavrilov.atm.command.ManageAtmStateCmd;
-import ru.gavrilov.atm.model.Atm;
+import ru.gavrilov.atm.observer.DepartmentManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +17,7 @@ public class AtmDepartmentImpl implements AtmDepartment {
 
     private List<Atm> atms = new ArrayList<>();
     private List<ManageAtmStateCmd> manageAtmStateCmds = new ArrayList<>();
+    private final DepartmentManager balanceManager = new DepartmentManager();
 
     public AtmDepartmentImpl() {
         this.atms = new ArrayList<>();
@@ -24,11 +28,12 @@ public class AtmDepartmentImpl implements AtmDepartment {
         for (Atm atm : atms) {
             this.atms.add(atm);
             this.saveAtmState(atm);
+            balanceManager.register(atm);
         }
     }
 
     private void saveAtmState(Atm atm) {
-        final ManageAtmStateCmd cmd = new ManageAtmStateCmd(atm);
+        var cmd = new ManageAtmStateCmd(atm);
         cmd.execute();
         manageAtmStateCmds.add(cmd);
     }
@@ -40,17 +45,21 @@ public class AtmDepartmentImpl implements AtmDepartment {
     }
 
     @Override
-    public void commonBalance() {
-        System.out.println("General balance: ");
+    public void departmentBalance() {
+        var departmentBalanceCmd = new DepartmentBalanceCmd();
+        balanceManager.notifySubscribers(departmentBalanceCmd);
     }
 
     @Override
     public void addAtm(Atm atm) {
-
+        atms.add(atm);
+        saveAtmState(atm);
+        balanceManager.register(atm);
     }
 
     @Override
     public void removeAtm(Atm atm) {
-
+        atms.remove(atm);
+        balanceManager.unregister(atm);
     }
 }

@@ -1,5 +1,8 @@
 package ru.gavrilov.atm.model;
 
+import ru.gavrilov.atm.api.Banknote;
+import ru.gavrilov.atm.api.Nominal;
+
 /**
  * @author gavrilov-sv
  * created on 20.05.2020

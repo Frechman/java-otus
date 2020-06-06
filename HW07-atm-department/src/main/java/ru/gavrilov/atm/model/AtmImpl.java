@@ -1,5 +1,8 @@
 package ru.gavrilov.atm.model;
 
+import ru.gavrilov.atm.api.Atm;
+import ru.gavrilov.atm.api.AtmCell;
+import ru.gavrilov.atm.api.Banknote;
 import ru.gavrilov.atm.command.BalanceCommand;
 import ru.gavrilov.atm.command.DepositCommand;
 import ru.gavrilov.atm.command.Transactional;
@@ -7,6 +10,7 @@ import ru.gavrilov.atm.command.WithdrawCommand;
 import ru.gavrilov.atm.exception.NotEnoughMoneyException;
 import ru.gavrilov.atm.memento.AtmMemento;
 import ru.gavrilov.atm.memento.AtmState;
+import ru.gavrilov.atm.observer.cmd.DepartmentCmd;
 
 import java.util.List;
 
@@ -16,9 +20,11 @@ import java.util.List;
  */
 public class AtmImpl implements Atm {
 
+    private String code;
     private List<AtmCell> cassettes;
 
-    public AtmImpl(List<AtmCell> cassettes) {
+    public AtmImpl(String code, List<AtmCell> cassettes) {
+        this.code = code;
         this.cassettes = cassettes;
     }
 
@@ -45,6 +51,11 @@ public class AtmImpl implements Atm {
     }
 
     @Override
+    public String getCode() {
+        return code;
+    }
+
+    @Override
     public void restoreState(AtmMemento memento) {
         cassettes = memento.getState().getCells();
     }
@@ -52,5 +63,10 @@ public class AtmImpl implements Atm {
     @Override
     public AtmMemento saveState() {
         return new AtmMemento(this, new AtmState(cassettes));
+    }
+
+    @Override
+    public void update(DepartmentCmd departmentCmd) {
+        departmentCmd.execute(this);
     }
 }

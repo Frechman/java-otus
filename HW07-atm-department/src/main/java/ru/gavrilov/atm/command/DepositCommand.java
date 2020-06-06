@@ -1,8 +1,8 @@
 package ru.gavrilov.atm.command;
 
-import ru.gavrilov.atm.model.AtmCell;
-import ru.gavrilov.atm.model.Banknote;
-import ru.gavrilov.atm.model.Nominal;
+import ru.gavrilov.atm.api.AtmCell;
+import ru.gavrilov.atm.api.Banknote;
+import ru.gavrilov.atm.api.Nominal;
 
 import java.util.List;
 import java.util.Map;

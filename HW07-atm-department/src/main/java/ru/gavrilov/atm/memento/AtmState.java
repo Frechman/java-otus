@@ -1,6 +1,6 @@
 package ru.gavrilov.atm.memento;
 
-import ru.gavrilov.atm.model.AtmCell;
+import ru.gavrilov.atm.api.AtmCell;
 import ru.gavrilov.atm.model.AtmCellImpl;
 
 import java.util.ArrayList;
