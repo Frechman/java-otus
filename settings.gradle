@@ -7,6 +7,7 @@ include 'HW03-test-framework'
 
 include 'HW05-aop-proxy'
 include 'HW06-atm'
+include 'HW07-atm-department'
 
 include 'notes'
 
