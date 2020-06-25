@@ -9,5 +9,7 @@ include 'HW05-aop-proxy'
 include 'HW06-atm'
 include 'HW07-atm-department'
 
+include 'HW09-orm-jdbc'
+
 include 'notes'
 
