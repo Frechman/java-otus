@@ -27,7 +27,7 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     private static final Logger logger = LoggerFactory.getLogger(JdbcMapperImpl.class);
 
     private final EntitySQLMetaData entitySQLMetaData;
-    private final EntityClassMetaData<T> classMetaData;
+    private final EntityClassMetaData<T> entityClassMetaData;
     private final Class<T> clazz;
     private final SessionManagerJdbc sessionManager;
     private final DbExecutor<T> dbExecutor;
@@ -36,8 +36,8 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
         this.clazz = clazz;
         this.sessionManager = sessionManager;
         this.dbExecutor = dbExecutor;
-        this.classMetaData = new EntityClassMetaDataImpl<>(clazz);
-        this.entitySQLMetaData = new EntitySQLMetaDataImpl(classMetaData);
+        this.entityClassMetaData = new EntityClassMetaDataImpl<>(clazz);
+        this.entitySQLMetaData = new EntitySQLMetaDataImpl(entityClassMetaData);
     }
 
     @Override
@@ -53,9 +53,9 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     @Override
     public void insertOrUpdate(T objectData) {
         final String sql;
-        final List<Object> params = getParams(classMetaData.getFieldsWithoutId(), objectData);
+        final List<Object> params = getParams(entityClassMetaData.getFieldsWithoutId(), objectData);
 
-        final Field idField = classMetaData.getIdField();
+        final Field idField = entityClassMetaData.getIdField();
         final Object idValue = ReflectionUtils.getFieldValue(idField, objectData);
 
         if (idValue != null && (long) idValue > 0L) {
