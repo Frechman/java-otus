@@ -2,13 +2,14 @@ package ru.gavrilov;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.gavrilov.impl.EntityClassMetaDataImpl;
+import ru.gavrilov.impl.EntitySQLMetaDataImpl;
 import ru.gavrilov.impl.JdbcMapperImpl;
 import ru.gavrilov.impl.UserDaoWithJdbcMapper;
 import ru.gavrilov.model.Account;
 import ru.gavrilov.model.User;
 import ru.otus.core.service.DbServiceUserImpl;
 import ru.otus.h2.DataSourceH2;
-import ru.otus.jdbc.DbExecutor;
 import ru.otus.jdbc.DbExecutorImpl;
 import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
@@ -36,9 +37,11 @@ public class JdbcMapperDemo {
 
         demo.createTable(dataSource, CREATE_USER_TABLE);
 
+        var userEntityClassMetaData = new EntityClassMetaDataImpl<>(User.class);
+        var userSQLMetaData = new EntitySQLMetaDataImpl(userEntityClassMetaData);
         var sessionManager = new SessionManagerJdbc(dataSource);
-        DbExecutor<User> dbExecutor = new DbExecutorImpl<>();
-        var userDao = new UserDaoWithJdbcMapper(sessionManager, dbExecutor);
+        var dbExecutor = new DbExecutorImpl<User>();
+        var userDao = new UserDaoWithJdbcMapper(userEntityClassMetaData, userSQLMetaData, sessionManager, dbExecutor);
 
         var dbServiceUser = new DbServiceUserImpl(userDao);
         var id = dbServiceUser.saveUser(new User(0, "dbServiceUser"));
@@ -51,8 +54,10 @@ public class JdbcMapperDemo {
 
         demo.createTable(dataSource, CREATE_ACCOUNT_TABLE);
 
+        var accountClassMetaData = new EntityClassMetaDataImpl<>(Account.class);
+        var accountSQLMetaData = new EntitySQLMetaDataImpl(accountClassMetaData);
         var accountDbExecutor = new DbExecutorImpl<Account>();
-        var accountJdbcMapper = new JdbcMapperImpl<>(Account.class, sessionManager, accountDbExecutor);
+        var accountJdbcMapper = new JdbcMapperImpl<>(accountClassMetaData, accountSQLMetaData, sessionManager, accountDbExecutor);
 
         sessionManager.beginSession();
 

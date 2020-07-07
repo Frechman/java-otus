@@ -37,7 +37,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
         try {
             return clazz.getDeclaredConstructor();
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(e);
+            return null;
         }
     }
 

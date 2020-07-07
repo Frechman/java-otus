@@ -4,6 +4,8 @@ import ru.gavrilov.model.User;
 import ru.otus.core.dao.UserDao;
 import ru.otus.core.sessionmanager.SessionManager;
 import ru.otus.jdbc.DbExecutor;
+import ru.otus.jdbc.mapper.EntityClassMetaData;
+import ru.otus.jdbc.mapper.EntitySQLMetaData;
 import ru.otus.jdbc.mapper.JdbcMapper;
 import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
@@ -18,9 +20,10 @@ public class UserDaoWithJdbcMapper implements UserDao {
     private final JdbcMapper<User> jdbcMapper;
     private final SessionManagerJdbc sessionManager;
 
-    public UserDaoWithJdbcMapper(SessionManagerJdbc sessionManager, DbExecutor<User> dbExecutor) {
+    public UserDaoWithJdbcMapper(EntityClassMetaData<User> classMetaData, EntitySQLMetaData sqlMetaData,
+                                 SessionManagerJdbc sessionManager, DbExecutor<User> dbExecutor) {
         this.sessionManager = sessionManager;
-        this.jdbcMapper = new JdbcMapperImpl<>(User.class, sessionManager, dbExecutor);
+        this.jdbcMapper = new JdbcMapperImpl<>(classMetaData, sqlMetaData, sessionManager, dbExecutor);
     }
 
     @Override

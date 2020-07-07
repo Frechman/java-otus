@@ -1,11 +1,8 @@
 package ru.gavrilov.impl;
 
-import ru.gavrilov.model.User;
-import ru.gavrilov.utils.ReflectionUtils;
 import ru.otus.jdbc.mapper.EntityClassMetaData;
 import ru.otus.jdbc.mapper.EntitySQLMetaData;
 
-import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Function;
@@ -17,54 +14,65 @@ import java.util.stream.Collectors;
  */
 public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
-    private static final String SELECT_QUERY_FORMAT = "SELECT %s FROM %s WHERE %s";
-    private static final String INSERT_QUERY_FORMAT = "INSERT INTO %s (%s) VALUES (%s)";
-    private static final String UPDATE_QUERY_FORMAT = "UPDATE %s SET %s WHERE %s";
-    private static final String CONDITION_ALL = "1 = 1";
-    private static final String CONDITION_BY_FIELD = " = ?";
-
-    private final EntityClassMetaData<?> entityClassMetaData;
-
-    private final String tableName;
-    private final String allParameters;
-    private final String parametersWithoutId;
+    private final String selectAllQuery;
+    private final String selectByIdQuery;
+    private final String insertQuery;
+    private final String updateQuery;
 
     public EntitySQLMetaDataImpl(EntityClassMetaData<?> classMetaData) {
-        this.entityClassMetaData = classMetaData;
-        this.tableName = classMetaData.getName().toLowerCase();
-        this.allParameters = buildStringQueryParameters(classMetaData.getAllFields(), Function.identity());
-        this.parametersWithoutId = buildStringQueryParameters(classMetaData.getFieldsWithoutId(), Function.identity());
+        this.selectAllQuery = buildSelectAllQuery(classMetaData);
+        this.selectByIdQuery = buildSelectByIdQuery(classMetaData);
+        this.insertQuery = buildInsertQuery(classMetaData);
+        this.updateQuery = buildUpdateQuery(classMetaData);
     }
 
     @Override
     public String getSelectAllSql() {
-        return String.format(SELECT_QUERY_FORMAT, allParameters, tableName, CONDITION_ALL);
+        return selectAllQuery;
     }
 
     @Override
     public String getSelectByIdSql() {
-        String conditionById = entityClassMetaData.getIdField().getName() + CONDITION_BY_FIELD;
-        return String.format(SELECT_QUERY_FORMAT, allParameters, tableName, conditionById);
+        return selectByIdQuery;
     }
 
     @Override
     public String getInsertSql() {
-        return String.format(
-                INSERT_QUERY_FORMAT, tableName, parametersWithoutId,
-                getQuestionsString(entityClassMetaData.getFieldsWithoutId().size()));
+        return insertQuery;
     }
 
     @Override
     public String getUpdateSql() {
-        String conditionById = entityClassMetaData.getIdField().getName() + CONDITION_BY_FIELD;
-        final String updatingParameters =
-                buildStringQueryParameters(entityClassMetaData.getFieldsWithoutId(), name -> name + CONDITION_BY_FIELD);
-        return String.format(UPDATE_QUERY_FORMAT, tableName, updatingParameters, conditionById);
+        return updateQuery;
     }
 
-    private String buildStringQueryParameters(List<Field> fieldList,
+    private String buildSelectAllQuery(EntityClassMetaData<?> classMetaData) {
+        var allParameters = buildStringQueryParameters(classMetaData.getAllFields(), Function.identity());
+        return String.format("SELECT %s FROM %s", allParameters, classMetaData.getName().toLowerCase());
+    }
+
+    private String buildSelectByIdQuery(EntityClassMetaData<?> classMetaData) {
+        var allParameters = buildStringQueryParameters(classMetaData.getAllFields(), Function.identity());
+        return String.format("SELECT %s FROM %s WHERE %s = ?",
+                allParameters, classMetaData.getName().toLowerCase(), classMetaData.getIdField().getName());
+    }
+
+    private String buildInsertQuery(EntityClassMetaData<?> classMetaData) {
+        var parametersWithoutId = buildStringQueryParameters(classMetaData.getFieldsWithoutId(), Function.identity());
+        var tableName = classMetaData.getName().toLowerCase();
+        return String.format("INSERT INTO %s (%s) VALUES (%s)",
+                tableName, parametersWithoutId, getQuestionsString(classMetaData.getFieldsWithoutId().size()));
+    }
+
+    private String buildUpdateQuery(EntityClassMetaData<?> classMetaData) {
+        var updateParameters = buildStringQueryParameters(classMetaData.getFieldsWithoutId(), param -> param + " = ?");
+        return String.format("UPDATE %s SET %s WHERE %s = ?",
+                classMetaData.getName().toLowerCase(), updateParameters, classMetaData.getIdField().getName());
+    }
+
+    private String buildStringQueryParameters(List<Field> fields,
                                               Function<? super String, ? extends String> mapper) {
-        return fieldList.stream().map(Field::getName).map(mapper).collect(Collectors.joining(", "));
+        return fields.stream().map(Field::getName).map(mapper).collect(Collectors.joining(", "));
     }
 
     private String getQuestionsString(int countQuestions) {

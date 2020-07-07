@@ -26,44 +26,51 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcMapperImpl.class);
 
-    private final EntitySQLMetaData entitySQLMetaData;
     private final EntityClassMetaData<T> entityClassMetaData;
-    private final Class<T> clazz;
+    private final EntitySQLMetaData entitySQLMetaData;
     private final SessionManagerJdbc sessionManager;
     private final DbExecutor<T> dbExecutor;
 
-    public JdbcMapperImpl(Class<T> clazz, SessionManagerJdbc sessionManager, DbExecutor<T> dbExecutor) {
-        this.clazz = clazz;
+    public JdbcMapperImpl(EntityClassMetaData<T> entityClassMetaData, EntitySQLMetaData entitySQLMetaData,
+                          SessionManagerJdbc sessionManager, DbExecutor<T> dbExecutor) {
+        validate(entityClassMetaData);
+        this.entityClassMetaData = entityClassMetaData;
+        this.entitySQLMetaData = entitySQLMetaData;
         this.sessionManager = sessionManager;
         this.dbExecutor = dbExecutor;
-        this.entityClassMetaData = new EntityClassMetaDataImpl<>(clazz);
-        this.entitySQLMetaData = new EntitySQLMetaDataImpl(entityClassMetaData);
+    }
+
+    private void validate(EntityClassMetaData<T> entityClassMetaData) {
+        if (entityClassMetaData.getIdField() == null) {
+            throw new IllegalArgumentException("Not found field annotated @Id in " + entityClassMetaData.getName());
+        }
+        if (entityClassMetaData.getConstructor() == null) {
+            throw new IllegalArgumentException("Class " + entityClassMetaData.getName() + " must have default constructor.");
+        }
     }
 
     @Override
     public void insert(T objectData) {
-        insertOrUpdate(objectData);
+        final List<Object> params = getParams(entityClassMetaData.getFieldsWithoutId(), objectData);
+        final String sql = entitySQLMetaData.getInsertSql();
+
+        try {
+            final long idFromDb = dbExecutor.executeInsert(getConnection(), sql, params);
+            ReflectionUtils.setFieldValue(objectData, entityClassMetaData.getIdField(), idFromDb);
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+            throw new UserDaoException(e);
+        }
     }
 
     @Override
     public void update(T objectData) {
-        insertOrUpdate(objectData);
-    }
-
-    @Override
-    public void insertOrUpdate(T objectData) {
-        final String sql;
+        final String sql = entitySQLMetaData.getUpdateSql();
         final List<Object> params = getParams(entityClassMetaData.getFieldsWithoutId(), objectData);
 
         final Field idField = entityClassMetaData.getIdField();
         final Object idValue = ReflectionUtils.getFieldValue(idField, objectData);
-
-        if (idValue != null && (long) idValue > 0L) {
-            sql = entitySQLMetaData.getUpdateSql();
-            params.add(idValue);
-        } else {
-            sql = entitySQLMetaData.getInsertSql();
-        }
+        params.add(idValue);
 
         try {
             final long idFromDb = dbExecutor.executeInsert(getConnection(), sql, params);
@@ -71,6 +78,16 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
+        }
+    }
+
+    @Override
+    public void insertOrUpdate(T objectData) {
+        final Object idValue = ReflectionUtils.getFieldValue(entityClassMetaData.getIdField(), objectData);
+        if (idValue != null && ((long) idValue) > 0L) {
+            update(objectData);
+        } else {
+            insert(objectData);
         }
     }
 
