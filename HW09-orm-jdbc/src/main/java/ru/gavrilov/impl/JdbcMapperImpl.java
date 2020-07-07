@@ -2,7 +2,6 @@ package ru.gavrilov.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.otus.core.dao.UserDaoException;
 import ru.otus.jdbc.DbExecutor;
 import ru.otus.jdbc.mapper.EntityClassMetaData;
 import ru.otus.jdbc.mapper.EntitySQLMetaData;
@@ -59,7 +58,6 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
             ReflectionUtils.setFieldValue(objectData, entityClassMetaData.getIdField(), idFromDb);
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
-            throw new UserDaoException(e);
         }
     }
 
@@ -77,7 +75,6 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
             ReflectionUtils.setFieldValue(objectData, idField, idFromDb);
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
-            throw new UserDaoException(e);
         }
     }
 
